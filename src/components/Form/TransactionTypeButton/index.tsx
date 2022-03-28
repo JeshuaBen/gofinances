@@ -19,7 +19,7 @@ import {
  }
  
 export function TransactionTypeButton ({
-   type,
+  type,
   title,
   isActive,
   ...rest} : Props) {

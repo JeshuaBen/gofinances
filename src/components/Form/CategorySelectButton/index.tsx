@@ -8,11 +8,12 @@ import {
 
 interface Props {
   category: string;
+  onPress: () => void;
 }
 
-export function CategorySelect({category} : Props) {
+export function CategorySelectButton({category, onPress} : Props) {
   return (
-    <Container>
+    <Container onPress={onPress}>
       <Category>{category}</Category>
       <Icon name="chevron-down"/>
     </Container>
