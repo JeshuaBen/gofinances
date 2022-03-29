@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Modal,
   TouchableWithoutFeedback,
@@ -6,11 +6,15 @@ import {
   Alert 
 } from 'react-native';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import uuid from 'react-native-uuid';
+
+import { useNavigation } from '@react-navigation/native'
+
 import { Input } from '../../components/Form/Input';
 import { Button } from '../../components/Form/Button';
 import { TransactionTypeButton } from '../../components/Form/TransactionTypeButton';
 import { CategorySelectButton } from '../../components/Form/CategorySelectButton';
-
 import { CategorySelect } from '../CategorySelect'
 
 import { 
@@ -27,6 +31,9 @@ export function Register() {
   const [openModal, setOpenModal] = useState(false);
   const [name, setName] = useState('')
   const [amount, setAmount] = useState('');
+
+
+  const navigation = useNavigation();
   
   const [category, setCategory] = useState({
     key: 'category',
@@ -45,7 +52,7 @@ export function Register() {
     setOpenModal(false);
   }
 
-  function handleRegister () {
+  async function handleRegister () {
     if(!transactionType)
       return Alert.alert('Selecione o tipo da transação');
 
@@ -58,15 +65,48 @@ export function Register() {
     if(amount.length === 0)
       return Alert.alert('Preencha o campo de valor');         
 
-    const data = {
+    const transactionData = {
+      id: String(uuid.v4()),
       name,
       amount,
       transactionType,
-      category: category.name
+      category: category.name,
+      date: new Date(),
     }
-    console.log(data)
-  }
 
+
+
+    
+    try {
+      const dataKey = '@gofinances:transactions';
+      const data = await AsyncStorage.getItem(dataKey);
+      const currentData = data ? JSON.parse(data) : [];
+
+      const dataFormated = [
+          ...currentData,
+        transactionData
+        ]
+      
+
+      await AsyncStorage.setItem(dataKey, JSON.stringify(dataFormated));
+
+      setTransactionType('');
+      setCategory({
+        key: 'category',
+        name: 'Categoria'
+      });
+      setName('');
+      setAmount('');
+
+      navigation.navigate('Listagem');
+
+
+    }catch (error) { 
+      console.log(error);
+      Alert.alert('Não foi possível salvar');
+    }
+  }
+  
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <Container>

@@ -4,7 +4,8 @@ import { TouchableOpacityProps } from 'react-native'
 import { 
   Container,
   Icon,
-  Title
+  Title,
+  Button
  } from './styles';
 
  const icons = {
@@ -16,26 +17,32 @@ import {
   type: 'up' | 'down';
   title: string;
   isActive: boolean
+  onPress: () => void;
  }
  
 export function TransactionTypeButton ({
   type,
   title,
   isActive,
+  onPress,
   ...rest} : Props) {
   return (
     <Container 
-      {...rest} 
       isActive={isActive}
       type={type}
-    >
-      <Icon 
-        name={icons[type]}
-        type={type}
-      ></Icon>
-      <Title>
-        {title}
-      </Title>
+      >
+      <Button
+        {...rest}
+        onPress={onPress}
+      >
+        <Icon 
+          name={icons[type]}
+          type={type}
+        ></Icon>
+        <Title>
+          {title}
+        </Title>
+      </Button>
     </Container>
   )
 }
