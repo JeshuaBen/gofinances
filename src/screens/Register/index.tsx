@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
   Modal,
   TouchableWithoutFeedback,
@@ -9,7 +9,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import uuid from 'react-native-uuid';
 
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, NavigationProp, ParamListBase } from '@react-navigation/native'
 
 import { Input } from '../../components/Form/Input';
 import { Button } from '../../components/Form/Button';
@@ -26,14 +26,20 @@ import {
   TransactionTypes
  } from './styles';
 
+
+
+
+
 export function Register() {
   const [transactionType, setTransactionType] = useState('');
   const [openModal, setOpenModal] = useState(false);
-  const [name, setName] = useState('')
+  const [name, setName] = useState('');
   const [amount, setAmount] = useState('');
 
+  const dataKey = '@gofinances:transactions';
 
-  const navigation = useNavigation();
+
+  const { navigate }:  NavigationProp<ParamListBase> = useNavigation();
   
   const [category, setCategory] = useState({
     key: 'category',
@@ -70,7 +76,7 @@ export function Register() {
       name,
       amount,
       transactionType,
-      category: category.name,
+      category: category,
       date: new Date(),
     }
 
@@ -78,7 +84,6 @@ export function Register() {
 
     
     try {
-      const dataKey = '@gofinances:transactions';
       const data = await AsyncStorage.getItem(dataKey);
       const currentData = data ? JSON.parse(data) : [];
 
@@ -98,7 +103,7 @@ export function Register() {
       setName('');
       setAmount('');
 
-      navigation.navigate('Listagem');
+      navigate('Listagem');
 
 
     }catch (error) { 
@@ -106,6 +111,14 @@ export function Register() {
       Alert.alert('Não foi possível salvar');
     }
   }
+
+  // useEffect( () => {
+  //   async function loadData() {
+  //     await AsyncStorage.removeItem(dataKey);
+  //   }
+
+  //   loadData();
+  // },[])
   
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
