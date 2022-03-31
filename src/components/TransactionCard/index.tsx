@@ -28,26 +28,30 @@ interface Props {
 
 
 export function TransactionCard({ data }: Props) {
-  const  category = categories.filter(
-    ( item ) => {
-      item.key === data.name
-      console.log(item.key)
+  // const  category = categories.filter(
+  //   item => item.key === data.category
+  // )[0];
+
+  
+  const category = categories.map((item) => {
+    if(item.key === data.category) {
+      data.category = item.icon
+      data.name = item.name
     }
-    )[0];
+  }) 
     
-    console.log(data.category)
   return(
     <Container>
       <Title>{data.name}</Title>
       <Amount type={data.type}>
-        {data.type === 'up' && '- '}
+        {data.type === 'down' && '- '}
         {data.amount}
       </Amount>
 
       <Footer>
         <Category>
-          <Icon name={category?.icon}/>
-          <CategoryName>{category?.name}</CategoryName>
+          <Icon name={data.category}/>
+          <CategoryName>{data.name}</CategoryName>
 
         </Category>
         <Date>{data.date}</Date>
