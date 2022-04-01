@@ -58,6 +58,11 @@ export function Register() {
     setOpenModal(false);
   }
 
+  if(amount.indexOf(',') !== -1) {
+    Alert.alert('Utilize ponto ao invés de vírgula para separar os números')
+  }  
+  
+
   async function handleRegister () {
     if(!transactionType)
       return Alert.alert('Selecione o tipo da transação');
@@ -69,7 +74,8 @@ export function Register() {
       return Alert.alert('Preencha o campo de nome');
     
     if(amount.length === 0)
-      return Alert.alert('Preencha o campo de valor');         
+      return Alert.alert('Preencha o campo de valor');
+      
 
     const transactionData = {
       id: String(uuid.v4()),

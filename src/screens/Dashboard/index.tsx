@@ -8,7 +8,7 @@ import { useTheme } from 'styled-components';
 import { HighlightCard } from '../../components/HighlightCard';
 import { TransactionCard, TransactionCardProps } from '../../components/TransactionCard';
 
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { 
     Container,
@@ -35,12 +35,13 @@ export interface DataListProps extends TransactionCardProps {
 
 interface HighLightProps {
   amount: string;
+  lastTransaction: string;
 }
 
 interface HighLightData {
   entries: HighLightProps,
   wastes: HighLightProps,
-  total: HighLightProps 
+  total: HighLightProps,
 }
 
 export function Dashboard() {
@@ -49,6 +50,25 @@ export function Dashboard() {
   const [highlightData, setHighlightData] = useState<HighLightData>({} as HighLightData);
 
   const theme = useTheme();
+
+  function getLastTransactionDate(
+      collection: DataListProps[],
+      type: 'up' | 'down'
+    ){
+    // Fazendo um filtro pelo tipo e depois mapeando as que possuem esse tipo para pegar a data e após converter para milissegundos, faz a comparação do maior e retorna ele como data.
+
+    const lastTransaction = new Date(
+      Math.max.apply(Math, collection
+        .filter(transaction  => transaction.type === type)
+        .map(transaction  => new Date(transaction.date).getTime())));
+    
+   // Formatando a data 2 dígitos.
+
+    return `${lastTransaction.getDate()} de ${lastTransaction.toLocaleDateString('pt-BR', { month: 'long' })}`
+  }
+
+
+  // Função para inserir os dados no nosso AsyncStorage, formatar os dados que são retornados e listar eles de forma dinâmica na nossa interface.
 
   async function loadTransactions() {
     const dataKey = '@gofinances:transactions';
@@ -80,7 +100,7 @@ export function Dashboard() {
         year: '2-digit'
       }).format(new Date(item.date));
 
-      // console.log(item)
+
       return {
         id: item.id,
         name: item.name,
@@ -92,28 +112,36 @@ export function Dashboard() {
     });
     
     setTransactions(transactionsFormatted);
+
+    const lastTransactionIncomes = getLastTransactionDate(transactions, 'up');
+    const lastTransactionOutcomes = getLastTransactionDate(transactions, 'down');
+    const totalIntervalDate = `01 a ${lastTransactionOutcomes}`;
+
     const totalSum = entriesSum - wasteSum;
+
     setHighlightData({
       entries: {
         amount: entriesSum.toLocaleString('pt-BR', {
           style: 'currency',
           currency: 'BRL'
-        })
+        }),
+        lastTransaction: `Última entrada dia ${lastTransactionIncomes}`
       },
       wastes: {
         amount: wasteSum.toLocaleString('pt-BR', {
           style: 'currency',
           currency: 'BRL'
-        })
+        }),
+        lastTransaction: `Última saída dia ${lastTransactionOutcomes}`,
       },
       total: {
         amount: totalSum.toLocaleString('pt-BR', {
           style: 'currency',
           currency: 'BRL'
-        })
+        }),
+        lastTransaction: totalIntervalDate
       }
     })
-    console.log(transactionsFormatted)
     setIsLoading(false)
 
   }
@@ -161,19 +189,20 @@ export function Dashboard() {
                   type="income" 
                   title="Entradas" 
                   amount={highlightData.entries.amount}
-                  lastTransaction="Última entrada dia 13 de abril"
+                  lastTransaction={highlightData.entries.lastTransaction}
                 />
                 <HighlightCard
                   type="outcome"  
                   title="Saídas" 
                   amount={highlightData.wastes.amount} 
-                  lastTransaction="Última entrada dia 03 de abril"
+                  lastTransaction={highlightData.wastes.lastTransaction}
+
                 />
                 <HighlightCard
                   type="total"  
                   title="Total" 
                   amount={highlightData.total.amount} 
-                  lastTransaction="1 à 16 de Abril"   
+                  lastTransaction={highlightData.total.lastTransaction}
                 />
               </HighlightCards>
 
