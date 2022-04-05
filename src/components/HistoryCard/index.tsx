@@ -12,9 +12,13 @@ import {
    color: string;
  }
 
- export function HistoryCard({title, amount, color} : Props) {
+ export function HistoryCard({
+   title, 
+   amount, 
+   color
+  } : Props) {
    return(
-     <Container color{...color}>
+     <Container color={color}>
        <Title>{title}</Title>
        <Amount>{amount}</Amount>
      </Container>
