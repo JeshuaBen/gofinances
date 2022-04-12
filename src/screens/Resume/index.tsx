@@ -46,15 +46,13 @@ import { categories } from '../../components/utils/categories';
  }
 
  export function Resume () {
-  const [isLoading, setIsLoading] = useState(true); 
+  const [isLoading, setIsLoading] = useState(false); 
   const [selectedDate, setSelectedDate] = useState (new Date);
   const [totalByCategories, setTotalByCategories] = useState<CategoryData[]>([]);
   
   const theme = useTheme();
 
   function handleDateChange(action: 'next' | 'previous') {
-    setIsLoading(true);
-
     if(action === 'next') {
       setSelectedDate(addMonths(selectedDate, 1))
 
@@ -64,6 +62,7 @@ import { categories } from '../../components/utils/categories';
   }
 
   async function loadData () {
+    setIsLoading(true);
     const dataKey = '@gofinances:transactions';
     const response = await AsyncStorage.getItem(dataKey);
     const responseFormatted = response ? JSON.parse(response) : [];
@@ -116,13 +115,10 @@ import { categories } from '../../components/utils/categories';
     setIsLoading(false)
    }
    
-  useEffect(() => {
-     loadData();
-   }, [selectedDate]);
 
   useFocusEffect(useCallback(() => {
     loadData();
-  },[]));
+  },[selectedDate]));
 
    return (
      <Container>
