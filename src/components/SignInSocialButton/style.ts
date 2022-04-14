@@ -6,7 +6,6 @@ export const Button = styled.TouchableOpacity `
   width: 311px;
 
   margin-bottom: 16px;
-  /* padding: 18px; */
 
   background-color: ${({ theme }) => theme.colors.shape};
   border-radius: 5px;
@@ -21,15 +20,19 @@ export const ImageContainer = styled.View `
   align-items: center;
 
   padding: ${RFValue(16)}px;
-  background-color: ${({ theme}) => theme.colors.background};
+  background-color: ${({ theme}) => theme.colors.shape};
+
   border-right-width: 1px;
-  border-color: ${({ theme }) => theme.colors.text}
+  border-color: ${({ theme }) => theme.colors.background};
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
 `;
 
 export const Text = styled.Text `
   flex: 1;
+  text-align: center;
+
   font-family: ${({ theme }) => theme.fonts.medium};
   font-size: ${RFValue(14)}px;
 
-  text-align: center;
 `;
