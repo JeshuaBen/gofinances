@@ -33,6 +33,7 @@ export interface DataListProps extends TransactionCardProps {
   id: string;
 }
 
+
 interface HighLightProps {
   amount: string;
   lastTransaction: string;
